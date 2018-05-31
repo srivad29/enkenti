@@ -1,0 +1,32 @@
+---
+- name: Install Jenkins software
+  hosts: 35.231.45.144
+  gather_facts: true
+  become: yes
+  become_method: sudo
+  tags: [jenkins]
+  tasks:
+   - name: install wget
+     yum:
+      name: wget
+      state: present
+   - name: install openjdk
+     yum:
+      name: java-1.8.0-openjdk
+      state: present
+   - name: download jenkins.repo
+     get_url:
+      url: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+      dest: /etc/yum.repos.d/jenkins.repo
+   - name: Import Jenkins CI key
+     rpm_key:
+      key: http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+      state: present
+   - name: install jenkins
+     yum:
+      name: jenkins
+      state: present
+   - name: start jenkins
+     service:
+      name: jenkins
+      state: started
